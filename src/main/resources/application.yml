@@ -1,0 +1,30 @@
+spring:
+  # ??????MySQL???
+  datasource:
+    url: jdbc:mysql://47.76.63.232:3306/mysql?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  # JPA?????sql??
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  # mvc?????html??
+  mvc:
+    static-path-pattern: /**
+    view:
+      prefix: /
+      suffix: .html
+  # thymeleaf????????????false????
+  thymeleaf:
+    encoding: UTF-8
+    cache: false
+server:
+  # ???????
+  port: 8081
+  # ????????
+  web:
+    resources:
+      static-locations: classpath:/static/

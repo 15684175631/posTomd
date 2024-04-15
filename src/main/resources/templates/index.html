@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="author" content="Yuan-Programmer" />
+
+	<title>后台管理</title>
+	<link href="/static/css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
+	<link href="/static/css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet">
+	<link href="/static/css/plugins/iCheck/custom.css" rel="stylesheet">
+	<link href="/static/css/animate.min.css" rel="stylesheet">
+	<link href="/static/css/style.min862f.css?v=4.1.0" rel="stylesheet">
+	<script src="/static/js/jquery-3.4.1/jquery-3.4.1.js"></script>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>用户管理</h5>
+					<div class="ibox-tools">
+						<button id="addUserBtn" class="btn btn-xs btn-rounded btn-primary"><i class="fa fa-plus"></i> 添加</button>
+					</div>
+				</div>
+				<div class="ibox-content">
+					<div class="input-group">
+						<input id="search" type="text" placeholder="请输入关键词" class="input-sm form-control"> <span class="input-group-btn">
+							        <button id="findBtn" type="button" class="btn btn-sm btn-primary"><i class="fa fa-search"> 搜索</i> </button> </span>
+					</div>
+					<div id="userTable" th:fragment="userTable">
+						<table class="footable table table-stripped toggle-arrow-tiny">
+							<thead>
+							<tr>
+								<th>编号</th>
+								<th>用户名</th>
+								<th>昵称</th>
+								<th>密码</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr th:each="user: ${user_list}">
+								<td th:text="${user.id}">1</td>
+								<td th:text="${user.username}">ydw</td>
+								<td th:text="${user.nickname}">袁德伟</td>
+								<td th:text="${user.password}">123</td>
+								<td style="width: 50px;">
+									<button th:onclick="updateBtn([[${user.id}]],[[${user.username}]],[[${user.nickname}]],[[${user.password}]])" class="updateUserBtn btn btn-warning btn-xs btn-rounded" type="button">
+										<i class="fa fa-edit"></i> 修改
+									</button>
+								</td>
+								<td style="width: 50px;">
+									<button th:onclick="|deleteBtn(${user.id})|" class="deleteUserBtn btn btn-danger btn-xs btn-rounded" type="button">
+										<i class="fa fa-trash"></i> 删除
+									</button>
+								</td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<form method="post" action="/uploadSpring" enctype="multipart/form-data">
+	<input name="SpringFile" type="file"/>
+	<input type="submit" value="提交" />
+</form>
+
+<!-- 添加用户的弹出框 -->
+<div id="modal-form-add" class="modal fade" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-sm-12 b-r">
+						<div class="ibox-title">
+							<h5>添加新的用户</h5>
+						</div>
+						<div class="ibox-content">
+							<form id="addForm" class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">用户名：</label>
+									<div class="col-sm-8">
+										<input id="addUserName" type="text" placeholder="用户名" class="form-control">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">昵称：</label>
+									<div class="col-sm-8">
+										<input id="addNickname" type="text" placeholder="昵称" class="form-control">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">密码：</label>
+									<div class="col-sm-8">
+										<input id="addPassword" type="text" placeholder="密码" class="form-control">
+									</div>
+								</div>
+								<div>
+									<button id="addSubmitBtn" class="btn btn-primary btn-primary pull-right m-t-n-xs" type="button"><i class="fa fa-check"></i>&nbsp;提交
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 修改用户的弹出框 -->
+<div id="modal-form-update" class="modal fade" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-sm-12 b-r">
+						<div class="ibox-title">
+							<h5>修改用户信息</h5>
+						</div>
+						<div class="ibox-content">
+							<form id="updateForm" class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">编号：</label>
+									<div class="col-sm-8">
+										<input id="updateUserId" type="text" placeholder="编号" class="form-control" disabled>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">用户名：</label>
+									<div class="col-sm-8">
+										<input id="updateUsername" type="text" placeholder="用户名" class="form-control">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">昵称：</label>
+									<div class="col-sm-8">
+										<input id="updateNickname" type="text" placeholder="昵称" class="form-control">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">密码：</label>
+									<div class="col-sm-8">
+										<input id="updatePassword" type="text" placeholder="密码" class="form-control">
+									</div>
+								</div>
+								<div>
+									<button id="updateSubmitBtn" class="btn btn-primary btn-primary pull-right m-t-n-xs" type="button"><i class="fa fa-check"></i>&nbsp;提交
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="/static/js/jquery.min.js?v=2.1.4"></script>
+<script src="/static/js/bootstrap.min.js?v=3.3.6"></script>
+<script src="/static/js/plugins/peity/jquery.peity.min.js"></script>
+<script src="/static/js/content.min.js?v=1.0.0"></script>
+<script src="/static/js/plugins/iCheck/icheck.min.js"></script>
+<script src="/static/js/demo/peity-demo.min.js"></script>
+<script src="/static/js/myJS/index.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$("#ajaxsub").click(function(){
+			$("#domeform").ajaxSubmit({
+				url: "/api/fileupload/dome1",
+				type: "POST",
+				dataType: "json",
+				success: function (res) {
+					//处理成功后的业务逻辑
+				}
+			})
+		})
+	})
+</script>
+<script th:inline="javascript">
+	function deleteBtn(id) {
+		$.ajax({
+			type: 'POST',
+			url: '/user/delete',
+			data: {
+				'id': id
+			},
+			success: function (data) {
+				$('#userTable').html(data)
+			},
+			error: function (err) {
+				console.log(err)
+				alert("操作失败，请刷新重新尝试！")
+			}
+		})
+	}
+
+	// 点击修改按钮
+	function updateBtn(id, username, nickname, password) {
+		// 传递数据到弹出框
+		$('#modal-form-update').modal('show');
+		$('#updateUserId').val(id)
+		$('#updateUsername').val(username)
+		$('#updateNickname').val(nickname)
+		$('#updatePassword').val(password)
+	}
+	/**
+	 * 使用FormData
+	 */
+	$("#ormdatasub").click(function(){
+		var formdata = new FormData($("#domeform")[0]);
+		$.ajax({
+			url: "/api/fileupload/dome1",
+			type: "POST",
+			data:formdata,
+			dataType: "json",
+			processData: false,  // 告诉jQuery不要去处理发送的数据
+			contentType: false,   // 告诉jQuery不要去设置Content-Type请求头
+			success: function (res) {
+			}
+		})
+	})
+
+</script>
+</body>
+</html>
